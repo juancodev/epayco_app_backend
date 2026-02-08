@@ -26,7 +26,8 @@ export class WalletService {
       rechargeWalletDto.celular,
     );
 
-    const nuevoSaldo = parseFloat(client.saldo.toString()) + rechargeWalletDto.valor;
+    const nuevoSaldo =
+      parseFloat(client.saldo.toString()) + rechargeWalletDto.valor;
     await this.clientsService.updateSaldo(client.id, nuevoSaldo);
 
     return {
@@ -64,5 +65,4 @@ export class WalletService {
     });
     await this.transactionsRepository.save(transaction);
   }
-
 }

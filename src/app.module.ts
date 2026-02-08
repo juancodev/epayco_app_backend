@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from './clients/clients.module';
 import { WalletService } from './wallet/wallet.service';
 import { MailService } from './mail/mail.service';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MailService } from './mail/mail.service';
       synchronize: true,
     }),
     ClientsModule,
+    MailModule,
   ],
   providers: [WalletService, MailService],
 })
