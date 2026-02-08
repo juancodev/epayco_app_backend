@@ -2,9 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from './clients/clients.module';
-import { WalletService } from './wallet/wallet.service';
 import { MailModule } from './mail/mail.module';
-import { WalletController } from './wallet/wallet.controller';
+import { WalletModule } from './wallet/wallet.module';
 
 @Module({
   imports: [
@@ -22,9 +21,8 @@ import { WalletController } from './wallet/wallet.controller';
       synchronize: true,
     }),
     ClientsModule,
-    WalletService,
+    WalletModule,
     MailModule,
   ],
-  controllers: [WalletController],
 })
 export class AppModule {}
