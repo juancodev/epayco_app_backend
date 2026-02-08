@@ -24,20 +24,27 @@ export class ClientsService {
     });
 
     if (existing) {
-      throw new ConflictException('Ya existe un cliente con ese documento o correo');
+      throw new ConflictException(
+        'Ya existe un cliente con ese documento o correo',
+      );
     }
 
     const client = this.clientsRepository.create(createClientDto);
     return this.clientsRepository.save(client);
   }
 
-  async findByDocumentoAndCelular(documento: string, celular: string): Promise<Client> {
+  async findByDocumentoAndCelular(
+    documento: string,
+    celular: string,
+  ): Promise<Client> {
     const client = await this.clientsRepository.findOne({
       where: { documento, celular },
     });
 
     if (!client) {
-      throw new NotFoundException('Cliente no encontrado con ese documento y celular');
+      throw new NotFoundException(
+        'Cliente no encontrado con ese documento y celular',
+      );
     }
 
     return client;
