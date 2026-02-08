@@ -23,9 +23,7 @@ export class WalletService {
   ) {}
 
   private async getClientByTransaction(clientId: string) {
-    const client = await this.clientsService.findByDocumento(clientId);
-
-    return client;
+    return this.clientsService.findById(clientId);
   }
 
   async rechargeWallet(rechargeWalletDto: RechargeWalletDto) {
@@ -51,8 +49,6 @@ export class WalletService {
       requestPaymentDto.documento,
       requestPaymentDto.celular,
     );
-
-    console.log(client);
 
     const saldoActual = parseFloat(client.saldo.toString());
     if (saldoActual < requestPaymentDto.valor) {
@@ -101,13 +97,17 @@ export class WalletService {
       throw new BadRequestException('Token incorrecto');
     }
 
-    const client = await this.clientsService.findByDocumento(
-      (await this.getClientByTransaction(transaction.clientId))!.documento,
+    const clientFromTransaction = await this.getClientByTransaction(
+      transaction.clientId,
     );
 
-    if (!client) {
-      throw new NotFoundException('Cliente no encontrado o no existe');
+    if (!clientFromTransaction) {
+      throw new NotFoundException(
+        'Cliente asociado a la transacción no encontrado',
+      );
     }
+
+    const client = clientFromTransaction;
 
     const saldoActual = parseFloat(client.saldo.toString());
     const monto = parseFloat(transaction.monto.toString());

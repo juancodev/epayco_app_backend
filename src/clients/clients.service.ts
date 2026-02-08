@@ -54,6 +54,10 @@ export class ClientsService {
     await this.clientsRepository.update(clientId, { saldo: nuevoSaldo });
   }
 
+  async findById(clientId: string): Promise<Client | null> {
+    return this.clientsRepository.findOne({ where: { id: clientId } });
+  }
+
   async findByDocumento(documento: string): Promise<Client | null> {
     return this.clientsRepository.findOne({ where: { documento } });
   }
