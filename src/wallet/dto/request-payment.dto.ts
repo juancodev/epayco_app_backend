@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString, IsNumber, Min } from 'class-validator';
 export class RequestPaymentDto {
   @IsNotEmpty({ message: 'El Documento es requerido' })
   @IsString()
-  document: string;
+  documento: string;
 
   @IsNotEmpty({ message: 'El teléfono celular es requerido' })
   @IsString()

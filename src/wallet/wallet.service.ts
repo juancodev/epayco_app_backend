@@ -30,7 +30,7 @@ export class WalletService {
 
   async rechargeWallet(rechargeWalletDto: RechargeWalletDto) {
     const client = await this.clientsService.findByDocumentoAndCelular(
-      rechargeWalletDto.document,
+      rechargeWalletDto.documento,
       rechargeWalletDto.celular,
     );
 
@@ -48,9 +48,11 @@ export class WalletService {
 
   async requestPayment(requestPaymentDto: RequestPaymentDto) {
     const client = await this.clientsService.findByDocumentoAndCelular(
-      requestPaymentDto.document,
+      requestPaymentDto.documento,
       requestPaymentDto.celular,
     );
+
+    console.log(client);
 
     const saldoActual = parseFloat(client.saldo.toString());
     if (saldoActual < requestPaymentDto.valor) {
