@@ -7,7 +7,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Transaction } from './entities/transaction.entity';
-import { ClientsService } from 'src/clients/clients.service';
+import { ClientsService } from '../clients/clients.service';
+import { MailService } from '../mail/mail.service';
 import { RequestPaymentDto } from './dto/request-payment.dto';
 import { RechargeWalletDto } from './dto/recharge-wallet.dto';
 import { ConfirmPaymentDto } from './dto/confirm-payment.dto';
@@ -18,6 +19,7 @@ export class WalletService {
     @InjectRepository(Transaction)
     private transactionsRepository: Repository<Transaction>,
     private clientsService: ClientsService,
+    private mailService: MailService,
   ) {}
 
   async rechargeWallet(rechargeWalletDto: RechargeWalletDto) {
@@ -64,5 +66,6 @@ export class WalletService {
       expiresAt,
     });
     await this.transactionsRepository.save(transaction);
+    await this.
   }
 }

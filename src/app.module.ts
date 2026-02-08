@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from './clients/clients.module';
 import { WalletService } from './wallet/wallet.service';
-import { MailService } from './mail/mail.service';
 import { MailModule } from './mail/mail.module';
 
 @Module({
@@ -22,8 +21,8 @@ import { MailModule } from './mail/mail.module';
       synchronize: true,
     }),
     ClientsModule,
+    WalletService,
     MailModule,
   ],
-  providers: [WalletService, MailService],
 })
 export class AppModule {}
