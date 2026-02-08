@@ -22,6 +22,12 @@ export class WalletService {
     private mailService: MailService,
   ) {}
 
+  private async getClientByTransaction(clientId: string) {
+    const client = await this.clientsService.findByDocumento(clientId);
+
+    return client;
+  }
+
   async rechargeWallet(rechargeWalletDto: RechargeWalletDto) {
     const client = await this.clientsService.findByDocumentoAndCelular(
       rechargeWalletDto.document,
@@ -66,6 +72,72 @@ export class WalletService {
       expiresAt,
     });
     await this.transactionsRepository.save(transaction);
-    await this.
+    await this.mailService.sendToken(client.email, client.nombres, token);
+
+    return {
+      sessionId,
+      message: `Token enviado al correo ${client.email}`,
+    };
+  }
+
+  async confirmPayment(confirmPaymentDto: ConfirmPaymentDto) {
+    const transaction = await this.transactionsRepository.findOne({
+      where: { sessionId: confirmPaymentDto.sessionId, confirmed: false },
+    });
+
+    if (!transaction) {
+      throw new NotFoundException(
+        'Sesión de pago no encontrada o ya confirmada',
+      );
+    }
+
+    if (new Date() > transaction.expiresAt) {
+      throw new BadRequestException('El token ha expirado');
+    }
+
+    if (transaction.token !== confirmPaymentDto.token) {
+      throw new BadRequestException('Token incorrecto');
+    }
+
+    const client = await this.clientsService.findByDocumento(
+      (await this.getClientByTransaction(transaction.clientId))!.documento,
+    );
+
+    if (!client) {
+      throw new NotFoundException('Cliente no encontrado o no existe');
+    }
+
+    const saldoActual = parseFloat(client.saldo.toString());
+    const monto = parseFloat(transaction.monto.toString());
+
+    if (saldoActual < monto) {
+      throw new BadRequestException('saldo insuficiente');
+    }
+
+    const nuevoSaldo = saldoActual - monto;
+    await this.clientsService.updateSaldo(client.id, nuevoSaldo);
+
+    transaction.confirmed = true;
+    await this.transactionsRepository.save(transaction);
+
+    return {
+      transactionId: transaction.id,
+      montoDescontado: monto,
+      saldoAnterior: saldoActual,
+      saldoActual: nuevoSaldo,
+    };
+  }
+
+  async checkBalance(documento: string, celular: string) {
+    const client = await this.clientsService.findByDocumentoAndCelular(
+      documento,
+      celular,
+    );
+
+    return {
+      documento: client.documento,
+      nombres: client.nombres,
+      saldo: client.saldo,
+    };
   }
 }
