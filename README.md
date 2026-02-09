@@ -81,6 +81,43 @@ CREATE DATABASE epayco_db;
 ```bash
 npm run start:dev
 ```
+### 6. Envío de correos con Nodemailer
+
+Para la simulación del flujo de pago, se implementó el envío de correos electrónicos utilizando Nodemailer.
+
+Cuando un cliente solicita un pago, el sistema:
+
+- Genera un token de seguridad de un solo uso.
+
+- Crea una sesión de pago asociada al cliente.
+
+- Envía el token al correo electrónico registrado del cliente utilizando Nodemailer.
+
+- El cliente debe confirmar el pago enviando el sessionId y el token recibido.
+
+Este flujo simula el comportamiento real de una pasarela de pagos, donde se requiere una doble validación para autorizar una transacción.
+
+🔐 Flujo de pago resumido
+
+Cliente solicita un pago (/api/wallet/solicitarPago)
+
+El sistema:
+
+- Valida saldo disponible
+
+- Genera token y sessionId
+
+- Envía el token por correo electrónico (Nodemailer)
+
+Cliente confirma el pago (/api/wallet/confirmarPago)
+
+El sistema:
+
+- Valida token y sesión
+
+- Descuenta el saldo
+
+- Marca la transacción como exitosa
 
 La API estará disponible en:
 
